@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jordan SOP — Publishing Adam's Videos</title>
+<style>
+  :root{--orange:#EA7B2D;--ink:#f3f1fb;--muted:#b9b6d4;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:var(--ink);line-height:1.6;
+    background:radial-gradient(130% 100% at 20% 0%, #2a1a55 0%, #150f33 45%, #0a0820 100%);
+    background-attachment:fixed;min-height:100vh;
+  }
+  .wrap{max-width:840px;margin:0 auto;padding:64px 28px 100px;}
+  header{border-bottom:2px solid rgba(234,123,45,.4);padding-bottom:26px;margin-bottom:14px;}
+  .brand{text-transform:uppercase;letter-spacing:.22em;font-size:.78rem;color:var(--orange);font-weight:800;}
+  h1{font-size:2.5rem;line-height:1.1;font-weight:800;letter-spacing:-.02em;margin:.5rem 0;}
+  .lede{color:var(--muted);font-size:1.08rem;margin-top:.8rem;}
+  .lede b{color:#ffd9b8;font-weight:700;}
+  .note{display:inline-block;margin-top:1rem;background:rgba(234,123,45,.12);
+    border:1px solid rgba(234,123,45,.45);border-radius:10px;padding:.7rem 1rem;
+    font-size:.98rem;color:#ffe1c4;}
+  h2{font-size:1.5rem;font-weight:800;margin:42px 0 16px;display:flex;align-items:center;gap:.6rem;}
+  h2::before{content:"";width:.7rem;height:.7rem;border-radius:50%;background:var(--orange);}
+  a{color:#7fc4ff;text-decoration:none;border-bottom:1px solid rgba(127,196,255,.35);}
+  a:hover{border-bottom-color:#7fc4ff;}
+  .links li{margin:.5rem 0;list-style:none;}
+  .links b{color:#fff;}
+  ol.flow{counter-reset:s;list-style:none;}
+  ol.flow>li{counter-increment:s;position:relative;background:rgba(255,255,255,.035);
+    border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px 20px 18px 70px;margin:14px 0;}
+  ol.flow>li::before{content:counter(s);position:absolute;left:18px;top:16px;width:36px;height:36px;
+    border-radius:50%;background:var(--orange);color:#1a1030;font-weight:800;font-size:1.1rem;
+    display:flex;align-items:center;justify-content:center;}
+  ol.flow b{color:#fff;}
+  ol.flow .sub{display:block;margin-top:.5rem;color:var(--muted);font-size:.96rem;}
+  .last{border-color:rgba(234,123,45,.55)!important;background:rgba(234,123,45,.08)!important;}
+  ul.plain{list-style:none;}
+  ul.plain li{position:relative;padding-left:1.5rem;margin:.55rem 0;}
+  ul.plain li::before{content:"";position:absolute;left:0;top:.65em;width:.5rem;height:.5rem;border-radius:50%;background:var(--orange);}
+  ul.plain b{color:#fff;}
+  em{color:#ffd9b8;font-style:normal;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">Saltarelli Web Studio</div>
+    <h1>Publishing Adam's Videos<br>Full SOP, start to finish</h1>
+    <p class="lede">You own this from export to published, <b>including the short clips and the promo frame</b>. Full send, no drafts left sitting, nothing handed back to Adam except the one promo image at the very end. The main video takes about 15 to 20 minutes once you're used to it.</p>
+    <div class="note">You use the GPT with your <b>own</b> ChatGPT login (free is fine). You never use Adam's password.</div>
+  </header>
+  <h2>Links (bookmark these)</h2>
+  <ul class="links">
+    <li><b>SWS Video Publisher GPT:</b> <a href="https://chatgpt.com/g/g-6a42e39466ac819188e0b6bd2635564a">open the GPT</a></li>
+    <li><b>Adam's Drive folder</b> (face photos + promo frame + clip templates): the shared folder Adam sent you directly</li>
+    <li><b>Promo frame:</b> promo-frame.png, inside that shared Drive folder</li>
+    <li><b>YouTube Studio:</b> <a href="https://studio.youtube.com">studio.youtube.com</a></li>
+    <li><b>Spotify for Creators:</b> <a href="https://creators.spotify.com">creators.spotify.com</a></li>
+    <li><b>Opus Clip dashboard</b> (review + schedule + post clips): <a href="https://clip.opus.pro/dashboard">clip.opus.pro/dashboard</a></li>
+    <li><b>Opus Clip tutorial video</b> (how to post the clips): <a href="https://web.descript.com/005f5ac6-ade9-4f90-9b72-ec61aeb71189">watch tutorial</a></li>
+  </ul>
+  <h2>The flow</h2>
+  <ol class="flow">
+    <li><b>Export</b> the finished video from Descript (1080p).</li>
+    <li><b>Get the transcript</b> from Descript (export transcript, copy it).</li>
+    <li><b>Open the GPT</b> and paste the transcript.<span class="sub">It gives you a title + alternates, one description (used for BOTH YouTube and Spotify), and a thumbnail concept.</span></li>
+    <li><b>Make the thumbnail.</b> Same chat: upload one of Adam's face photos + the thumbnail concept. It builds a 1280x720 image, download it.<span class="sub">Not right? Say "bigger text" or "different background" and regenerate.</span></li>
+    <li><b>Verify the names.</b> Check the guest's name + business name against their real Instagram or LinkedIn.<span class="sub">Don't trust the transcript spelling. The GPT flags this with a "VERIFY:" line.</span></li>
+    <li><b>Upload and PUBLISH.</b> YouTube (title, description, thumbnail) and Spotify (same title + description). Live. Done.</li>
+    <li><b>Then the shorts.</b> Within about an hour of the YouTube video going live, Opus Clip processes it into clips. You'll see the same thumbnail so you know which video they came from. Review the clips, keep the good ones, and schedule/post them all right inside Opus Clip.<span class="sub"><b>Clip cover image:</b> either a good smiling screenshot of Adam from the video, or one of the templated clip thumbnails in the shared Drive folder (Adam already shared one with you via Opus Clip). The Opus tutorial video above walks you through posting.</span></li>
+    <li class="last"><b>Promo frame — LAST step, every single time.</b> Take the thumbnail you made + the orange promo frame (promo-frame.png). In the GPT, upload both and say: <em>"Put this thumbnail inside the dashed orange window of this frame, keep the frame exactly the same."</em> Download the result and <b>text it to Adam</b>. He posts it and takes it from there.<span class="sub">This is also how Adam gets pinged that the video is live.</span></li>
+  </ol>
+  <h2>Good to know</h2>
+  <ul class="plain">
+    <li><b>Your time is covered.</b> You're on the clock for the WHOLE process: download, upload, publishing, clip review, scheduling. Track it. Adam's paying for it so he doesn't have to do it.</li>
+    <li><b>Storage.</b> You'll download the exported video to upload it, then you can delete the file. If your computer keeps running low on space, tell Adam and he'll help you sort out more storage.</li>
+    <li><b>Free ChatGPT image limit.</b> Thumbnails are the only thing that can cap on a free account. Spread your work across the week instead of doing 5 in one sitting. If you hit the cap, send Adam the thumbnail concept and he'll make it in 10 seconds.</li>
+  </ul>
+  <h2>If something's off</h2>
+  <ul class="plain">
+    <li><b>Always verify names</b> (see step 5).</li>
+    <li><b>Robotic copy or an em-dash?</b> Tell the GPT "redo it, no em-dashes, more human."</li>
+    <li><b>Thumbnail won't look like Adam?</b> Try a different face photo, or "keep his face, change the background."</li>
+    <li><b>Stuck on publishing or scheduling?</b> Text Adam. Don't guess.</li>
+  </ul>
+</div>
+</body>
+</html>
