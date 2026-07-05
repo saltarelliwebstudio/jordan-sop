@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>It's Adam — IG Post Maker</title>
+<style>
+  :root{ --red:#E8352E; --bg:#0d0d0f; --panel:#17171a; --line:#2a2a2e; --txt:#f2f2f2; --mut:#9a9aa2; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--txt);}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:14px;margin:0 0 24px}
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:28px;align-items:start}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+  label{display:block;font-size:13px;color:var(--mut);margin:14px 0 6px;font-weight:600;letter-spacing:.2px}
+  label:first-child{margin-top:0}
+  input[type=text]{width:100%;padding:11px 12px;border-radius:9px;border:1px solid var(--line);background:#0f0f12;color:var(--txt);font-size:15px}
+  .drop{border:1.5px dashed #3a3a40;border-radius:10px;padding:14px;text-align:center;color:var(--mut);font-size:13px;cursor:pointer;transition:.15s}
+  .drop:hover{border-color:var(--red);color:var(--txt)}
+  .drop.has{border-style:solid;border-color:#3a7a3a;color:#cfe9cf}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .seg{display:flex;gap:8px;margin-top:4px}
+  .seg button{flex:1;padding:9px;border-radius:9px;border:1px solid var(--line);background:#0f0f12;color:var(--txt);cursor:pointer;font-size:13px;font-weight:600}
+  .seg button.on{background:var(--red);border-color:var(--red);color:#fff}
+  .go{margin-top:20px;width:100%;padding:13px;border:0;border-radius:10px;background:var(--red);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+  .go:disabled{opacity:.5;cursor:default}
+  .preview{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:14px}
+  canvas{width:100%;max-width:432px;height:auto;border-radius:12px;background:#000;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+  .hint{color:var(--mut);font-size:12px;text-align:center;line-height:1.5}
+  .file{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>It's Adam <span style="color:var(--red)">▪</span> IG Post Maker</h1>
+  <p class="sub">Drop your screenshot(s), add the guest, download the finished post. Same look every time.</p>
+  <div class="grid">
+    <div class="card">
+      <label>Solo or guest?</label>
+      <div class="seg" id="seg">
+        <button data-mode="solo" class="on">Solo (just Adam)</button>
+        <button data-mode="guest">Guest interview</button>
+      </div>
+
+      <div id="guestFields" style="display:none">
+        <label>Guest name</label>
+        <input type="text" id="guest" placeholder="e.g. Lily Taras" autocomplete="off">
+      </div>
+
+      <label id="lblImgA">Screenshot</label>
+      <div class="drop" id="dropA">Click or drop an image here</div>
+      <input type="file" class="file" id="fileA" accept="image/*">
+
+      <div id="imgBwrap" style="display:none">
+        <label>Guest's screenshot (their own frame)</label>
+        <div class="drop" id="dropB">Click or drop the guest's image here</div>
+        <input type="file" class="file" id="fileB" accept="image/*">
+      </div>
+
+      <button class="go" id="download">Download post</button>
+      <p class="hint" style="margin-top:12px">1080 × 1350 (4:5). For a guest, the two frames sit side by side with a divider so it reads as a split-screen interview.</p>
+    </div>
+
+    <div class="preview">
+      <canvas id="cv" width="1080" height="1350"></canvas>
+      <p class="hint">Live preview. Everything is drawn exactly, every time — text, colors, the red square, and the split divider never change.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const W=1080,H=1350;
+const RED="#E8352E", DARK="#0d0d0d", WHITE="#ffffff";
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+let mode="solo", imgA=null, imgB=null;
+
+const IMG_H = 812;            // top image area height
+const bandTop = IMG_H;        // band starts here
+
+function loadFile(file, cb){
+  if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{ const im=new Image(); im.onload=()=>cb(im); im.src=e.target.result; };
+  r.readAsDataURL(file);
+}
+// cover-fit an image into a box
+function drawCover(im,x,y,w,h){
+  const ir=im.width/im.height, br=w/h; let sw,sh,sx,sy;
+  if(ir>br){ sh=im.height; sw=sh*br; sx=(im.width-sw)/2; sy=0; }
+  else { sw=im.width; sh=sw/br; sx=0; sy=(im.height-sh)/2; }
+  ctx.drawImage(im,sx,sy,sw,sh,x,y,w,h);
+}
+function placeholder(x,y,w,h,label){
+  ctx.fillStyle="#242428"; ctx.fillRect(x,y,w,h);
+  ctx.fillStyle="#55555c"; ctx.font="600 30px Arial"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillText(label,x+w/2,y+h/2);
+}
+
+function render(){
+  // bg
+  ctx.fillStyle=DARK; ctx.fillRect(0,0,W,H);
+
+  // top image(s)
+  if(mode==="guest"){
+    const gap=10, halfW=(W-gap)/2;
+    if(imgA) drawCover(imgA,0,0,halfW,IMG_H); else placeholder(0,0,halfW,IMG_H,"Adam");
+    if(imgB) drawCover(imgB,halfW+gap,0,halfW,IMG_H); else placeholder(halfW+gap,0,halfW,IMG_H,"Guest");
+    // divider line
+    ctx.fillStyle=DARK; ctx.fillRect(halfW,0,gap,IMG_H);
+  } else {
+    if(imgA) drawCover(imgA,0,0,W,IMG_H); else placeholder(0,0,W,IMG_H,"Screenshot");
+  }
+
+  // band
+  ctx.fillStyle=DARK; ctx.fillRect(0,bandTop,W,H-bandTop);
+
+  const cx=W/2;
+  const hasGuest = mode==="guest";
+  const guest = (document.getElementById('guest').value||"").trim().toUpperCase();
+  const bandH = H - bandTop;
+  ctx.textBaseline="alphabetic";
+
+  // build the stack of lines, then vertically center it in the band
+  const GAP=32;
+  const lines=[{word:true,size:118}];
+  if(hasGuest && guest) lines.push({text:"FEATURING "+guest,color:WHITE,size:38,ls:4});
+  lines.push({text:"NEW EPISODE - OUT NOW",color:RED,size:46,ls:3});
+  lines.push({text:"LISTEN ON SPOTIFY  ·  LINK IN BIO",color:WHITE,size:30,ls:3});
+
+  const blockH = lines.reduce((a,l)=>a+l.size,0)+GAP*(lines.length-1);
+  let top = bandTop + (bandH-blockH)/2;
+
+  lines.forEach(l=>{
+    const baseline = top + l.size*0.80;
+    if(l.word){
+      ctx.font="800 118px 'Helvetica Neue',Arial,sans-serif";
+      ctx.fillStyle=WHITE; ctx.textAlign="left";
+      const word="It's Adam";
+      const wWidth=ctx.measureText(word).width;
+      const sq=46, gapSq=14, totalW=wWidth+gapSq+sq, startX=cx-totalW/2;
+      ctx.fillText(word,startX,baseline);
+      ctx.fillStyle=RED; ctx.fillRect(startX+wWidth+gapSq, baseline-sq, sq, sq);
+    } else {
+      ctx.fillStyle=l.color;
+      ctx.font=`700 ${l.size}px 'Helvetica Neue',Arial,sans-serif`;
+      drawSpaced(l.text,cx,baseline,l.ls);
+    }
+    top += l.size + GAP;
+  });
+}
+
+// draw centered text with letter-spacing
+function drawSpaced(txt,cx,y,ls){
+  ls=ls||0;
+  const widths=[...txt].map(c=>ctx.measureText(c).width);
+  const total=widths.reduce((a,b)=>a+b,0)+ls*(txt.length-1);
+  let x=cx-total/2; const prev=ctx.textAlign; ctx.textAlign="left";
+  for(let i=0;i<txt.length;i++){ ctx.fillText(txt[i],x,y); x+=widths[i]+ls; }
+  ctx.textAlign=prev;
+}
+
+// ---- wire up UI ----
+document.querySelectorAll('#seg button').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('#seg button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); mode=b.dataset.mode;
+    document.getElementById('guestFields').style.display = mode==="guest"?"block":"none";
+    document.getElementById('imgBwrap').style.display = mode==="guest"?"block":"none";
+    document.getElementById('lblImgA').textContent = mode==="guest"?"Your screenshot (Adam's frame)":"Screenshot";
+    render();
+  };
+});
+document.getElementById('guest').oninput=render;
+function hookDrop(dropId,fileId,set){
+  const drop=document.getElementById(dropId), file=document.getElementById(fileId);
+  drop.onclick=()=>file.click();
+  file.onchange=e=>loadFile(e.target.files[0],im=>{set(im);drop.classList.add('has');drop.textContent="✓ image loaded (click to change)";render();});
+  drop.ondragover=e=>{e.preventDefault();drop.style.borderColor=RED;};
+  drop.ondragleave=e=>{drop.style.borderColor="";};
+  drop.ondrop=e=>{e.preventDefault();drop.style.borderColor="";loadFile(e.dataTransfer.files[0],im=>{set(im);drop.classList.add('has');drop.textContent="✓ image loaded (click to change)";render();});};
+}
+hookDrop('dropA','fileA',im=>imgA=im);
+hookDrop('dropB','fileB',im=>imgB=im);
+
+document.getElementById('download').onclick=()=>{
+  render();
+  const a=document.createElement('a');
+  a.download='its-adam-ig-post.png';
+  a.href=cv.toDataURL('image/png');
+  a.click();
+};
+
+render();
+</script>
+</body>
+</html>
